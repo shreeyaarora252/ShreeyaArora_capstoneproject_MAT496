@@ -1,0 +1,12 @@
+langgraph
+langchain
+langchain-groq
+langchain-community
+langchain-openai
+faiss-cpu
+sentence-transformers
+python-dotenv
+langsmith
+chromadb
+duckduckgo-search
+wikipedia
