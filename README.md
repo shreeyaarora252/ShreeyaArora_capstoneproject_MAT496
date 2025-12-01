@@ -59,7 +59,7 @@ The system supports Langsmith tracing (configurable via .env) for debugging conv
 
 ## Plan
 
-- [TODO] Step 1: Project setup - Create directory structure, virtual environment, install dependencies
+- [DONE] Step 1: Project setup - Create directory structure, virtual environment, install dependencies
 - [TODO] Step 2: Define state schema - Create InterviewState with conversation tracking and performance metrics
 - [TODO] Step 3: Create prompt templates - Write structured prompts for interviewer persona, evaluation, hints
 - [TODO] Step 4: Build question bank - Curate 35 questions across DSA, System Design, and Behavioral categories
