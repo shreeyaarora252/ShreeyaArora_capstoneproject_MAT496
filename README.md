@@ -63,7 +63,7 @@ The system supports Langsmith tracing (configurable via .env) for debugging conv
 - [DONE] Step 2: Define state schema - Create InterviewState with conversation tracking and performance metrics
 - [DONE] Step 3: Create prompt templates - Write structured prompts for interviewer persona, evaluation, hints
 - [DONE] Step 4: Build question bank - Curate 35 questions across DSA, System Design, and Behavioral categories
-- [TODO] Step 5: Implement vector store - Set up ChromaDB with sentence-transformers for semantic retrieval
+- [DONE] Step 5: Implement vector store - Set up ChromaDB with sentence-transformers for semantic retrieval
 - [TODO] Step 6: Create Pydantic schemas - Define structured output models for evaluations and summaries
 - [TODO] Step 7: Implement LangGraph nodes - Build 7 specialized nodes for different conversation stages
 - [TODO] Step 8: Integrate external tools - Implement web search, Wikipedia API, and complexity analyzer
