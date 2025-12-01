@@ -1,0 +1,428 @@
+{
+  "dsa": [
+    {
+      "id": "dsa_001",
+      "topic": "arrays",
+      "difficulty": "easy",
+      "question": "Given an array of integers, find two numbers that add up to a specific target. Return the indices of these two numbers.",
+      "hints": [
+        "Think about what data structure allows O(1) lookup of elements",
+        "Consider using a hash map to store numbers you've seen and their indices",
+        "For each number, check if (target - current number) exists in your hash map"
+      ],
+      "expected_concepts": ["hash maps", "two pointers", "time complexity O(n)"]
+    },
+    {
+      "id": "dsa_002",
+      "topic": "strings",
+      "difficulty": "easy",
+      "question": "Check if a given string is a valid palindrome, considering only alphanumeric characters and ignoring case.",
+      "hints": [
+        "Two pointers approach works well here - one from start, one from end",
+        "Remember to skip non-alphanumeric characters",
+        "Convert to same case before comparing"
+      ],
+      "expected_concepts": ["two pointers", "string manipulation", "O(n) time"]
+    },
+    {
+      "id": "dsa_003",
+      "topic": "linked_lists",
+      "difficulty": "medium",
+      "question": "Reverse a singly linked list. Can you do it both iteratively and recursively?",
+      "hints": [
+        "For iterative: think about what pointers you need to track (prev, current, next)",
+        "For recursive: consider the base case - what happens with null or single node?",
+        "Recursive approach reverses the rest of the list first, then fixes pointers"
+      ],
+      "expected_concepts": ["linked list manipulation", "recursion", "pointer management"]
+    },
+    {
+      "id": "dsa_004",
+      "topic": "trees",
+      "difficulty": "medium",
+      "question": "Given a binary tree, find its maximum depth (the number of nodes along the longest path from root to leaf).",
+      "hints": [
+        "This is a classic recursion problem",
+        "What's the max depth of a null tree? That's your base case",
+        "Max depth = 1 + max(left subtree depth, right subtree depth)"
+      ],
+      "expected_concepts": ["tree traversal", "recursion", "DFS"]
+    },
+    {
+      "id": "dsa_005",
+      "topic": "dynamic_programming",
+      "difficulty": "hard",
+      "question": "You are climbing a staircase with n steps. You can climb 1 or 2 steps at a time. How many distinct ways can you reach the top?",
+      "hints": [
+        "This is a Fibonacci-like pattern - do you see why?",
+        "To reach step n, you could have come from step (n-1) or step (n-2)",
+        "Use memoization or bottom-up DP to avoid recalculating subproblems"
+      ],
+      "expected_concepts": ["dynamic programming", "memoization", "fibonacci pattern"]
+    },
+    {
+      "id": "dsa_006",
+      "topic": "graphs",
+      "difficulty": "hard",
+      "question": "Implement a function to detect if a cycle exists in a directed graph.",
+      "hints": [
+        "DFS with a 'recursion stack' tracking works well here",
+        "Keep track of three states: unvisited, visiting (in current path), visited",
+        "If you encounter a 'visiting' node again, you've found a cycle"
+      ],
+      "expected_concepts": ["graph traversal", "DFS", "cycle detection", "recursion stack"]
+    },
+    {
+      "id": "dsa_007",
+      "topic": "arrays",
+      "difficulty": "medium",
+      "question": "Find the maximum sum of any contiguous subarray (Kadane's Algorithm problem).",
+      "hints": [
+        "Track two values: current sum and maximum sum seen so far",
+        "At each element, decide: add to current sum or start fresh from this element?",
+        "This can be solved in O(n) time with O(1) space"
+      ],
+      "expected_concepts": ["dynamic programming", "kadane's algorithm", "greedy approach"]
+    },
+    {
+      "id": "dsa_008",
+      "topic": "hash_tables",
+      "difficulty": "easy",
+      "question": "Given an array of integers, find the first repeating element. Return -1 if no element repeats.",
+      "hints": [
+        "A hash set can track elements you've already seen",
+        "Iterate through the array once, checking if each element is in your set",
+        "This achieves O(n) time complexity"
+      ],
+      "expected_concepts": ["hash sets", "linear scan", "space-time tradeoff"]
+    },
+    {
+      "id": "dsa_009",
+      "topic": "sorting",
+      "difficulty": "medium",
+      "question": "Implement merge sort and explain its time and space complexity. Why is it preferred over quick sort in certain scenarios?",
+      "hints": [
+        "Merge sort uses divide-and-conquer: split array in half recursively",
+        "The merge step combines two sorted arrays into one",
+        "It's stable and has guaranteed O(n log n) worst-case performance"
+      ],
+      "expected_concepts": ["merge sort", "divide and conquer", "O(n log n)", "stability"]
+    },
+    {
+      "id": "dsa_010",
+      "topic": "stacks",
+      "difficulty": "easy",
+      "question": "Implement a stack that supports push, pop, and retrieving the minimum element in constant time.",
+      "hints": [
+        "You need to track the minimum at each state of the stack",
+        "Consider using an auxiliary stack to store minimums",
+        "Each push/pop updates both the main stack and min stack"
+      ],
+      "expected_concepts": ["stack operations", "auxiliary data structures", "O(1) operations"]
+    },
+    {
+      "id": "dsa_011",
+      "topic": "binary_search",
+      "difficulty": "medium",
+      "question": "Find the first and last position of a target value in a sorted array. If not found, return [-1, -1]. Achieve O(log n) time.",
+      "hints": [
+        "Use binary search twice: once for leftmost position, once for rightmost",
+        "Modify binary search to continue searching even after finding the target",
+        "For leftmost: when target found, keep searching left; for rightmost, keep searching right"
+      ],
+      "expected_concepts": ["binary search", "modified binary search", "O(log n)"]
+    },
+    {
+      "id": "dsa_012",
+      "topic": "heaps",
+      "difficulty": "hard",
+      "question": "Find the median from a data stream. Design a data structure that supports adding numbers and finding the median in efficient time.",
+      "hints": [
+        "Use two heaps: a max-heap for smaller half, min-heap for larger half",
+        "Keep heaps balanced (size difference at most 1)",
+        "Median is either the root of one heap or average of both roots"
+      ],
+      "expected_concepts": ["heaps", "max heap", "min heap", "streaming data"]
+    },
+    {
+      "id": "dsa_013",
+      "topic": "bit_manipulation",
+      "difficulty": "easy",
+      "question": "Given an array where every element appears twice except one, find the single element. Use O(1) space.",
+      "hints": [
+        "XOR has a useful property: a ^ a = 0 and a ^ 0 = a",
+        "XOR all elements together - duplicates cancel out",
+        "The result will be the single unique element"
+      ],
+      "expected_concepts": ["XOR operation", "bit manipulation", "O(n) time O(1) space"]
+    },
+    {
+      "id": "dsa_014",
+      "topic": "sliding_window",
+      "difficulty": "medium",
+      "question": "Find the longest substring without repeating characters.",
+      "hints": [
+        "Use a sliding window with two pointers (start and end)",
+        "Track characters in current window using a hash set",
+        "When duplicate found, shrink window from left until no duplicates"
+      ],
+      "expected_concepts": ["sliding window", "hash set", "two pointers", "O(n) time"]
+    },
+    {
+      "id": "dsa_015",
+      "topic": "backtracking",
+      "difficulty": "hard",
+      "question": "Generate all valid combinations of n pairs of parentheses.",
+      "hints": [
+        "Use backtracking to build strings character by character",
+        "Track count of open and close parentheses used so far",
+        "Only add ')' if there are more '(' already placed"
+      ],
+      "expected_concepts": ["backtracking", "recursion", "valid parentheses", "constraint satisfaction"]
+    }
+  ],
+  "system_design": [
+    {
+      "id": "sd_001",
+      "topic": "scalability",
+      "difficulty": "medium",
+      "question": "Design a URL shortening service like bit.ly. Focus on the core functionality: generating short URLs and redirecting to original URLs.",
+      "hints": [
+        "Think about the data model first - what do you need to store?",
+        "How will you generate unique short codes? Hash functions vs counter-based?",
+        "Consider scalability: caching frequently accessed URLs, database sharding"
+      ],
+      "expected_concepts": ["hashing", "database design", "caching", "REST APIs"]
+    },
+    {
+      "id": "sd_002",
+      "topic": "caching",
+      "difficulty": "medium",
+      "question": "Design a distributed cache system. Explain how you'd handle cache invalidation and consistency.",
+      "hints": [
+        "Consider cache eviction policies: LRU, LFU, TTL-based",
+        "For distributed cache, think about consistent hashing for key distribution",
+        "Cache invalidation strategies: write-through, write-back, write-around"
+      ],
+      "expected_concepts": ["LRU cache", "consistent hashing", "cache invalidation", "Redis"]
+    },
+    {
+      "id": "sd_003",
+      "topic": "databases",
+      "difficulty": "hard",
+      "question": "Design a real-time trading platform's order matching system. Consider high throughput, low latency, and consistency requirements.",
+      "hints": [
+        "Think about data structures for order books - what allows fast matching?",
+        "Consistency is critical - how do you prevent race conditions?",
+        "Latency matters - in-memory data structures, lock-free algorithms?"
+      ],
+      "expected_concepts": ["order books", "concurrency", "ACID properties", "event sourcing"]
+    },
+    {
+      "id": "sd_004",
+      "topic": "microservices",
+      "difficulty": "hard",
+      "question": "Design a notification service that sends emails, SMS, and push notifications. How would you ensure reliability and handle failures?",
+      "hints": [
+        "Message queues can help decouple and ensure reliability",
+        "Consider retry mechanisms with exponential backoff",
+        "Dead letter queues for permanently failed messages"
+      ],
+      "expected_concepts": ["message queues", "retry logic", "idempotency", "circuit breakers"]
+    },
+    {
+      "id": "sd_005",
+      "topic": "load_balancing",
+      "difficulty": "medium",
+      "question": "Design a load balancer for a web application. Explain different load balancing algorithms and when to use each.",
+      "hints": [
+        "Round robin is simplest but doesn't consider server load",
+        "Least connections tracks active connections per server",
+        "Consider health checks and failover mechanisms"
+      ],
+      "expected_concepts": ["load balancing algorithms", "health checks", "sticky sessions", "Layer 7 vs Layer 4"]
+    },
+    {
+      "id": "sd_006",
+      "topic": "api_design",
+      "difficulty": "easy",
+      "question": "Design a RESTful API for a social media platform's post creation and retrieval. Include authentication considerations.",
+      "hints": [
+        "Use proper HTTP methods: GET, POST, PUT, DELETE",
+        "Resource naming: /users/{id}/posts for user's posts",
+        "Authentication: JWT tokens, OAuth 2.0"
+      ],
+      "expected_concepts": ["REST principles", "HTTP methods", "JWT", "API versioning"]
+    },
+    {
+      "id": "sd_007",
+      "topic": "rate_limiting",
+      "difficulty": "medium",
+      "question": "Implement a rate limiter that restricts users to N requests per time window. Discuss different algorithms (token bucket, leaky bucket, sliding window).",
+      "hints": [
+        "Token bucket: tokens refill at constant rate, burst allowed",
+        "Leaky bucket: requests processed at constant rate, smooth traffic",
+        "Sliding window: precise but more memory intensive"
+      ],
+      "expected_concepts": ["token bucket", "leaky bucket", "sliding window", "Redis for distributed rate limiting"]
+    },
+    {
+      "id": "sd_008",
+      "topic": "cdn",
+      "difficulty": "medium",
+      "question": "Design a Content Delivery Network (CDN). How do you ensure low latency for users globally?",
+      "hints": [
+        "Edge servers located geographically close to users",
+        "DNS-based routing to nearest edge server",
+        "Cache static content, origin pull for misses"
+      ],
+      "expected_concepts": ["edge servers", "geo-routing", "cache invalidation", "origin servers"]
+    },
+    {
+      "id": "sd_009",
+      "topic": "search",
+      "difficulty": "hard",
+      "question": "Design a search autocomplete system like Google's search suggestions. Handle billions of queries efficiently.",
+      "hints": [
+        "Trie data structure for prefix matching",
+        "Pre-compute popular queries, cache heavily",
+        "Consider query logs for ranking suggestions"
+      ],
+      "expected_concepts": ["trie", "prefix matching", "ranking algorithms", "caching"]
+    },
+    {
+      "id": "sd_010",
+      "topic": "data_consistency",
+      "difficulty": "hard",
+      "question": "Explain CAP theorem and design a system that prioritizes availability over consistency (AP system). Give a real-world use case.",
+      "hints": [
+        "CAP: Consistency, Availability, Partition tolerance - pick 2",
+        "AP systems: DynamoDB, Cassandra - eventual consistency",
+        "Use case: Social media feeds (ok if slightly stale)"
+      ],
+      "expected_concepts": ["CAP theorem", "eventual consistency", "partition tolerance", "distributed systems"]
+    }
+  ],
+  "behavioral": [
+    {
+      "id": "beh_001",
+      "topic": "leadership",
+      "difficulty": "medium",
+      "question": "Tell me about a time when you had to make a difficult technical decision with incomplete information. How did you approach it?",
+      "hints": [
+        "Use the STAR format: Situation, Task, Action, Result",
+        "Focus on your thought process and reasoning",
+        "Mention how you gathered information and consulted others"
+      ],
+      "expected_concepts": ["STAR format", "decision making", "communication"]
+    },
+    {
+      "id": "beh_002",
+      "topic": "conflict_resolution",
+      "difficulty": "medium",
+      "question": "Describe a situation where you disagreed with a teammate about a technical approach. How did you resolve it?",
+      "hints": [
+        "Show that you can disagree professionally",
+        "Emphasize listening to their perspective",
+        "Explain how you reached consensus or escalated appropriately"
+      ],
+      "expected_concepts": ["STAR format", "collaboration", "compromise"]
+    },
+    {
+      "id": "beh_003",
+      "topic": "problem_solving",
+      "difficulty": "medium",
+      "question": "Tell me about the most complex technical problem you've solved. What made it challenging?",
+      "hints": [
+        "Choose a problem with technical depth",
+        "Explain your debugging/problem-solving approach",
+        "Highlight learning and growth from the experience"
+      ],
+      "expected_concepts": ["STAR format", "technical depth", "persistence"]
+    },
+    {
+      "id": "beh_004",
+      "topic": "failure",
+      "difficulty": "medium",
+      "question": "Describe a project or task that didn't go as planned. What did you learn from it?",
+      "hints": [
+        "Be honest but frame positively",
+        "Focus on lessons learned and how you improved",
+        "Show accountability - what would you do differently?"
+      ],
+      "expected_concepts": ["STAR format", "growth mindset", "accountability"]
+    },
+    {
+      "id": "beh_005",
+      "topic": "collaboration",
+      "difficulty": "easy",
+      "question": "Give an example of how you helped a teammate who was struggling with a technical concept or task.",
+      "hints": [
+        "Show empathy and patience",
+        "Explain your teaching/mentoring approach",
+        "Highlight the positive outcome for both of you"
+      ],
+      "expected_concepts": ["STAR format", "mentorship", "teamwork"]
+    },
+    {
+      "id": "beh_006",
+      "topic": "time_management",
+      "difficulty": "medium",
+      "question": "Tell me about a time when you had to manage multiple high-priority tasks with tight deadlines. How did you prioritize?",
+      "hints": [
+        "Explain your prioritization framework (impact, urgency, dependencies)",
+        "Mention communication with stakeholders",
+        "Discuss trade-offs you made"
+      ],
+      "expected_concepts": ["STAR format", "prioritization", "stakeholder management"]
+    },
+    {
+      "id": "beh_007",
+      "topic": "initiative",
+      "difficulty": "medium",
+      "question": "Describe a situation where you went above and beyond your job responsibilities to improve a process or solve a problem.",
+      "hints": [
+        "Show proactive behavior and ownership",
+        "Quantify impact if possible (time saved, bugs prevented, etc.)",
+        "Explain what motivated you to take initiative"
+      ],
+      "expected_concepts": ["STAR format", "ownership", "impact"]
+    },
+    {
+      "id": "beh_008",
+      "topic": "feedback",
+      "difficulty": "medium",
+      "question": "Tell me about a time you received critical feedback. How did you respond and what changes did you make?",
+      "hints": [
+        "Show openness to feedback and lack of defensiveness",
+        "Explain concrete actions you took to improve",
+        "Mention follow-up to show progress"
+      ],
+      "expected_concepts": ["STAR format", "growth mindset", "self-improvement"]
+    },
+    {
+      "id": "beh_009",
+      "topic": "innovation",
+      "difficulty": "hard",
+      "question": "Describe a time when you proposed and implemented an innovative solution to a technical or process problem.",
+      "hints": [
+        "Explain the problem and why existing solutions were inadequate",
+        "Describe your creative approach and how you convinced others",
+        "Quantify results and adoption"
+      ],
+      "expected_concepts": ["STAR format", "creativity", "influence"]
+    },
+    {
+      "id": "beh_010",
+      "topic": "ambiguity",
+      "difficulty": "hard",
+      "question": "Give an example of a project where requirements were unclear or kept changing. How did you handle the ambiguity?",
+      "hints": [
+        "Show comfort with uncertainty and adaptability",
+        "Explain how you clarified requirements through communication",
+        "Discuss iterative approach and flexibility"
+      ],
+      "expected_concepts": ["STAR format", "adaptability", "agile mindset"]
+    }
+  ]
+}
