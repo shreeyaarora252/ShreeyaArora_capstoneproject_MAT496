@@ -70,7 +70,7 @@ The system supports Langsmith tracing (configurable via .env) for debugging conv
 - [DONE] Step 9: Assemble graph workflow - Wire nodes together with conditional routing
 - [DONE] Step 10: Build CLI interface - Create interactive command-line interface
 - [DONE] Step 11: Testing & debugging - Test all conversation flows and fix edge cases
-- [TODO] Step 12: Documentation - Write comprehensive README with architecture explanation
+- [DONE] Step 12: Documentation - Write comprehensive README with architecture explanation
 
 ---
 
