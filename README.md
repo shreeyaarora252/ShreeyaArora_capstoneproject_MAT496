@@ -66,7 +66,7 @@ The system supports Langsmith tracing (configurable via .env) for debugging conv
 - [DONE] Step 5: Implement vector store - Set up ChromaDB with sentence-transformers for semantic retrieval
 - [DONE] Step 6: Create Pydantic schemas - Define structured output models for evaluations and summaries
 - [DONE] Step 7: Implement LangGraph nodes - Build 7 specialized nodes for different conversation stages
-- [TODO] Step 8: Integrate external tools - Implement web search, Wikipedia API, and complexity analyzer
+- [DONE] Step 8: Integrate external tools - Implement web search, Wikipedia API, and complexity analyzer
 - [DONE] Step 9: Assemble graph workflow - Wire nodes together with conditional routing
 - [TODO] Step 10: Build CLI interface - Create interactive command-line interface
 - [TODO] Step 11: Testing & debugging - Test all conversation flows and fix edge cases
