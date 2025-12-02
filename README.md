@@ -74,11 +74,13 @@ The system supports Langsmith tracing (configurable via .env) for debugging conv
 
 ---
 
-## Video Summary Link
+## Usage Example
 
-[Video will be added here]
+![CLI startup and resource query](./images/Sample_output1.png)
 
----
+![Follow up question for practice](./images/Sample_output2.png)
+
+![Goodbye!](./images/Goodbye.png)
 
 ## Setup & Installation
 
