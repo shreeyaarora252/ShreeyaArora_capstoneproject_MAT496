@@ -75,44 +75,52 @@ def topic_selector_node(state: InterviewState) -> InterviewState:
 
 def topic_parser_node(state: InterviewState) -> InterviewState:
     """
-    Parses user's topic selection from their response.
-    Sets topic_category and current_topic in state.
+    Uses LLM to parse user's topic selection from natural language.
     """
     # Get last user message
     last_user_msg = None
     for msg in reversed(state["messages"]):
         if isinstance(msg, HumanMessage):
-            last_user_msg = msg.content.lower()
+            last_user_msg = msg.content
             break
     
     if not last_user_msg:
         return state
     
-    # Simple keyword matching (can be enhanced with LLM)
-    if any(word in last_user_msg for word in ["dsa", "algorithm", "data structure", "array", "tree", "graph"]):
-        state["topic_category"] = "dsa"
-        # Extract specific topic if mentioned
-        topics = ["arrays", "strings", "linked_lists", "trees", "dynamic_programming", "graphs"]
-        for topic in topics:
-            if topic.replace("_", " ") in last_user_msg or topic in last_user_msg:
-                state["current_topic"] = topic
-                break
-        if not state.get("current_topic"):
-            state["current_topic"] = "arrays"  # default
+    # Use structured output to extract topic
+    from schemas import TopicSelection
+    
+    topic_extraction_prompt = f"""The user said: "{last_user_msg}"
+
+Extract their interview category preference. They might say it directly ("I want DSA") or indirectly ("let's practice algorithms" or "help me with designing systems").
+
+Categories:
+- dsa: Data structures, algorithms, coding, leetcode, arrays, trees, graphs, etc.
+- system_design: Scalability, architecture, distributed systems, databases, caching, etc.
+- behavioral: Leadership, teamwork, conflict resolution, STAR method, etc.
+
+If unclear or asking about resources (not wanting to practice), set topic_category to None."""
+    
+    structured_llm = llm.with_structured_output(TopicSelection)
+    
+    try:
+        result = structured_llm.invoke([
+            SystemMessage(content="You are an expert at understanding user intent for interview practice."),
+            HumanMessage(content=topic_extraction_prompt)
+        ])
+        
+        if result.topic_category:
+            state["topic_category"] = result.topic_category
+            state["current_topic"] = result.specific_topic or result.topic_category
+            state["difficulty_level"] = result.difficulty_preference or "medium"
             
-    elif any(word in last_user_msg for word in ["system design", "design", "scalability", "architecture"]):
-        state["topic_category"] = "system_design"
-        topics = ["scalability", "caching", "databases", "microservices"]
-        for topic in topics:
-            if topic in last_user_msg:
-                state["current_topic"] = topic
-                break
-        if not state.get("current_topic"):
-            state["current_topic"] = "scalability"
-            
-    elif any(word in last_user_msg for word in ["behavioral", "leadership", "conflict"]):
-        state["topic_category"] = "behavioral"
-        state["current_topic"] = "leadership"
+            # Acknowledge the choice
+            from langchain_core.messages import AIMessage
+            ack_msg = f"Great! Let's practice {result.topic_category.replace('_', ' ').upper()}. {result.reasoning}"
+            state["messages"].append(AIMessage(content=ack_msg))
+        
+    except Exception as e:
+        print(f"Topic parsing error: {e}")
     
     return state
 
@@ -480,8 +488,12 @@ def route_user_input(state: InterviewState) -> Literal["answer", "hint", "new_qu
 
 def tool_calling_node(state: InterviewState) -> InterviewState:
     """
-    Handles tool calls when user asks for external information.
-    Demonstrates MCP-like tool integration.
+    Handles tool calls when user asks for external information:
+    - resources / how to prepare
+    - concept explanations
+    - complexity analysis
+
+    Uses LLM to decide which tool to call and how to use results.
     """
     # Get last user message
     last_user_msg = None
@@ -493,64 +505,74 @@ def tool_calling_node(state: InterviewState) -> InterviewState:
     if not last_user_msg:
         return state
     
-    msg_lower = last_user_msg.lower()
+    # Bind tools to LLM
+    llm_with_tools = llm.bind_tools(AVAILABLE_TOOLS)
     
-    # Direct tool routing based on keywords
-    tool_to_call = None
-    tool_args = {}
+    system_prompt = """You are a tool-routing assistant embedded inside an interview coach.
+You have access to these tools:
+- web_search_interview_tips(query: str)
+- get_algorithm_explanation(algorithm_name: str)
+- complexity_analyzer(code_description: str)
+
+Decide which tool, if any, to call based on the user's request:
+- If they ask "how to prepare", "resources", "books", "courses" -> use web_search_interview_tips.
+- If they ask "explain X", "what is X", "definition of X" -> use get_algorithm_explanation.
+- If they ask "complexity of this approach/algorithm/code" -> use complexity_analyzer.
+
+When appropriate, call EXACTLY ONE tool with proper arguments.
+If no tool is needed, respond conversationally yourself.
+"""
+
+    user_prompt = f"""User message: "{last_user_msg}"
+
+Decide whether to call a tool or respond without tools."""
     
-    # Detect which tool to use
-    if any(word in msg_lower for word in ["resource", "tip", "prepare", "best way", "recommend", "guide", "tutorial", "learn"]):
-        tool_to_call = "web_search_interview_tips"
-        # Clean up the query
-        query = last_user_msg.replace("I want to", "").replace("i want to", "").strip()
-        tool_args = {"query": query}
+    try:
+        # Ask LLM to either call a tool or answer
+        response = llm_with_tools.invoke([
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=user_prompt)
+        ])
         
-    elif any(word in msg_lower for word in ["explain", "what is", "tell me about", "definition of"]):
-        # Extract concept name (simple heuristic)
-        concept = last_user_msg
-        for phrase in ["explain ", "what is ", "tell me about ", "definition of ", "i want to learn about ", "learn about "]:
-            if phrase in msg_lower:
-                idx = msg_lower.index(phrase) + len(phrase)
-                concept = last_user_msg[idx:].strip().rstrip("?").rstrip(".")
-                break
-        tool_to_call = "get_algorithm_explanation"
-        tool_args = {"algorithm_name": concept}
+        # If the model responded normally (no tool calls)
+        if not getattr(response, "tool_calls", None):
+            state["messages"].append(AIMessage(content=response.content))
+            return state
         
-    elif "complexity" in msg_lower:
-        tool_to_call = "complexity_analyzer"
-        tool_args = {"code_description": last_user_msg}
+        # There are tool calls
+        for tc in response.tool_calls:
+            tool_name = tc["name"]
+            tool_args = tc["args"]
+            print(f"🔧 LLM chose tool: {tool_name} with args: {tool_args}")
+            
+            # Find and execute the tool
+            tool_func = next((t for t in AVAILABLE_TOOLS if t.name == tool_name), None)
+            if not tool_func:
+                state["messages"].append(AIMessage(content="I couldn't find a suitable tool to handle that request."))
+                return state
+            
+            tool_result = tool_func.invoke(tool_args)
+            
+            # Now ask LLM to format the tool result nicely for the user
+            format_prompt = f"""You called the tool {tool_name} for the user message: "{last_user_msg}".
+
+Tool raw output:
+{tool_result}
+
+Now, present this information to the user in a clear, helpful way.
+Summarize and structure it if needed. Do NOT mention tools, just act like a helpful interview coach."""
+            formatted = llm.invoke([
+                SystemMessage(content="You are a helpful technical interview coach."),
+                HumanMessage(content=format_prompt)
+            ])
+            state["messages"].append(AIMessage(content=formatted.content))
+        
+        return state
     
-    # Execute tool if identified
-    if tool_to_call:
-        print(f"🔧 Calling tool: {tool_to_call} with args: {tool_args}")
-        
-        tool_func = None
-        for t in AVAILABLE_TOOLS:
-            if t.name == tool_to_call:
-                tool_func = t
-                break
-        
-        if tool_func:
-            try:
-                result = tool_func.invoke(tool_args)
-                print(f"✓ Tool executed successfully")
-                state["messages"].append(AIMessage(content=result))
-            except Exception as e:
-                print(f"❌ Tool error: {e}")
-                state["messages"].append(AIMessage(content=f"I encountered an error fetching that information. Let's continue with the interview."))
-        else:
-            state["messages"].append(AIMessage(content="I couldn't find the right tool for that request."))
-    else:
-        # No specific tool detected, use LLM to respond conversationally
-        messages = [
-            SystemMessage(content="You are a helpful technical interviewer."),
-            HumanMessage(content=last_user_msg)
-        ]
-        response = llm.invoke(messages)
-        state["messages"].append(AIMessage(content=response.content))
-    
-    return state
+    except Exception as e:
+        print(f"Tool calling error: {e}")
+        state["messages"].append(AIMessage(content="I had trouble fetching external information. Let's continue with the interview instead."))
+        return state
 
 
 """

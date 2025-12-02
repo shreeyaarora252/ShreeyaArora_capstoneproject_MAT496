@@ -12,164 +12,74 @@ from typing import Optional
 @tool
 def web_search_interview_tips(query: str) -> str:
     """
-    Search the web for interview preparation tips, best practices, and resources.
-    Useful when candidate asks for study resources or latest interview trends.
+    Search for interview preparation tips and resources using AI-powered recommendations.
+    Uses LLM to provide contextual, personalized advice based on the query.
     
     Args:
-        query: Search query about interview topics (e.g., "best way to prepare for system design interviews")
+        query: Search query about interview topics
     
     Returns:
-        Summary of top search results or curated recommendations
+        AI-generated resource recommendations with explanations
     """
+    from langchain_groq import ChatGroq
+    from langchain_core.messages import SystemMessage, HumanMessage
+    import os
     
-    # Curated resources by topic (fallback strategy)
-    curated_resources = {
-        "system design": """**📚 System Design Resources**
-
-**1. System Design Primer (GitHub)**
-Comprehensive guide covering scalability, load balancing, caching, databases, and more.
-🔗 https://github.com/donnemartin/system-design-primer
-
-**2. Grokking the System Design Interview**
-Popular course covering real-world system design problems with detailed solutions.
-🔗 https://www.educative.io/courses/grokking-the-system-design-interview
-
-**3. ByteByteGo (Alex Xu)**
-System Design Interview books (Volume 1 & 2) - industry favorites
-🔗 https://bytebytego.com/
-
-**4. YouTube Channels:**
-• Gaurav Sen - Excellent system design videos
-• Tech Dummies Narendra L - Clear explanations
-• Exponent - Mock interviews
-
-**5. Practice Platforms:**
-• Pramp - Free mock interviews
-• interviewing.io - Practice with engineers""",
-        
-        "dsa": """**📚 DSA (Data Structures & Algorithms) Resources**
-
-**1. LeetCode**
-Premium platform with 2000+ problems, company-specific questions
-🔗 https://leetcode.com/
-
-**2. NeetCode**
-Curated list of 150 essential problems with video explanations
-🔗 https://neetcode.io/
-
-**3. AlgoExpert**
-Structured curriculum with 160+ questions + video explanations
-🔗 https://www.algoexpert.io/
-
-**4. Books:**
-• Cracking the Coding Interview (CTCI) - Gayle Laakmann McDowell
-• Elements of Programming Interviews
-
-**5. Free Resources:**
-• GeeksforGeeks - Comprehensive tutorials
-• HackerRank - Practice problems
-• Codeforces - Competitive programming""",
-        
-        "behavioral": """**📚 Behavioral Interview Resources**
-
-**1. STAR Method Framework**
-Situation, Task, Action, Result - structure your answers effectively
-
-**2. Common Questions to Prepare:**
-• Tell me about yourself
-• Biggest challenge you've faced
-• Conflict with a teammate
-• Leadership experience
-• Failure and what you learned
-
-**3. Resources:**
-• Cracking the Coding Interview - Behavioral section
-• Glassdoor - Company-specific questions
-• Blind - Real interview experiences
-
-**4. Mock Interview Platforms:**
-• Pramp - Free peer practice
-• interviewing.io - Practice with engineers
-• Big Interview - AI feedback"""
-    }
+    # Use the same LLM instance
+    llm = ChatGroq(
+        model="llama-3.3-70b-versatile",
+        temperature=0.7,
+        groq_api_key=os.getenv("GROQ_API_KEY")
+    )
     
-    # Try web search first with enhanced query
+    # Prompt the LLM to act as an interview preparation expert
+    system_prompt = """You are an expert technical interview coach with deep knowledge of:
+- Data Structures & Algorithms preparation (LeetCode, competitive programming)
+- System Design interviews (scalability, distributed systems)
+- Behavioral interviews (STAR method, leadership stories)
+
+When asked about interview preparation, provide:
+1. Specific, actionable resources (courses, books, platforms, YouTube channels)
+2. A structured study plan or approach
+3. Key topics to focus on
+4. Pro tips based on your expertise
+
+Be concise but comprehensive. Include actual URLs when mentioning well-known resources like:
+- LeetCode (leetcode.com)
+- System Design Primer (github.com/donnemartin/system-design-primer)
+- NeetCode (neetcode.io)
+- Grokking courses (educative.io)
+- ByteByteGo (bytebytego.com)
+
+Format your response clearly with headings and bullet points."""
+
+    user_prompt = f"A candidate is asking: '{query}'\n\nProvide comprehensive interview preparation guidance with specific resources and actionable advice."
+    
     try:
-        enhanced_query = query
-        if "interview" not in query.lower():
-            enhanced_query = f"{query} interview preparation"
+        response = llm.invoke([
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=user_prompt)
+        ])
         
-        print(f"🔍 Searching web: '{enhanced_query}'")
+        return response.content
         
-        ddgs = DDGS()
-        results = ddgs.text(enhanced_query, max_results=5)
-        
-        if results:
-            # Filter out irrelevant results
-            filtered_results = []
-            for result in results:
-                title_lower = result['title'].lower()
-                href = result['href'].lower()
-                
-                # Skip login/signup pages and unrelated domains
-                skip_keywords = ["log in", "sign up", "create account", "login", "signin"]
-                skip_domains = ["/login", "/signin", "/signup", "learn.lboro"]
-                
-                if any(word in title_lower for word in skip_keywords):
-                    continue
-                if any(domain in href for domain in skip_domains):
-                    continue
-                
-                # Prefer educational/tech content
-                if any(domain in href for domain in ["github", "educative", "leetcode", "medium", "dev.to", "youtube", "geeksforgeeks"]):
-                    filtered_results.insert(0, result)  # Prioritize
-                else:
-                    filtered_results.append(result)
-                
-                if len(filtered_results) >= 3:
-                    break
-            
-            if filtered_results:
-                summary = f"**📚 Resources for: '{query}'**\n\n"
-                for i, result in enumerate(filtered_results[:3], 1):
-                    summary += f"**{i}. {result['title']}**\n"
-                    summary += f"{result['body'][:180]}...\n"
-                    summary += f"🔗 {result['href']}\n\n"
-                return summary
-    
     except Exception as e:
-        print(f"⚠️ Web search failed: {e}")
-    
-    # Fallback to curated resources
-    print("📖 Using curated resources")
-    query_lower = query.lower()
-    
-    if any(word in query_lower for word in ["system design", "scalability", "architecture"]):
-        return curated_resources["system design"]
-    elif any(word in query_lower for word in ["dsa", "algorithm", "data structure", "leetcode", "coding"]):
-        return curated_resources["dsa"]
-    elif any(word in query_lower for word in ["behavioral", "leadership", "conflict", "star method"]):
-        return curated_resources["behavioral"]
-    else:
-        # General response
-        return """**📚 General Interview Preparation Resources**
+        # Fallback if LLM call fails
+        return f"""I encountered an error fetching personalized recommendations. Here are some reliable starting points:
 
-        **Technical Interviews:**
-        • System Design Primer: https://github.com/donnemartin/system-design-primer
-        • LeetCode: https://leetcode.com/
-        • NeetCode: https://neetcode.io/
+**System Design:**
+• System Design Primer: https://github.com/donnemartin/system-design-primer
+• Grokking the System Design Interview
 
-        **Practice Platforms:**
-        • Pramp (free mock interviews)
-        • interviewing.io
-        • Blind (company reviews & experiences)
+**DSA:**
+• LeetCode: https://leetcode.com/
+• NeetCode: https://neetcode.io/
 
-        **Books:**
-        • Cracking the Coding Interview
-        • System Design Interview (Alex Xu)
-        • Designing Data-Intensive Applications
+**Behavioral:**
+• Use STAR method for structuring answers
+• Prepare 5-7 stories covering different scenarios
 
-        Ask me for specific topic resources (e.g., "system design resources" or "DSA practice")!"""
+Error details: {str(e)}"""
 
 
 @tool
